@@ -251,7 +251,7 @@ class Parser
     public function getAvailableHours($date)
     {
         //return ['hours' => ['']];
-        $ch = $this->createCurl("https://xn--b1ab2a0a.xn--b1aew.xn--p1ai/services/appointment/appointment_hours/" . http_build_query([
+        $ch = $this->createCurl("https://xn--b1ab2a0a.xn--b1aew.xn--p1ai/services/appointment/appointment_hours/?" . http_build_query([
             'site_id' => '2',
             'district_id' => '',
             'document_id' => '364',
