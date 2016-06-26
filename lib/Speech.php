@@ -69,12 +69,12 @@ class Speech
                             },
                             explode(' ', $text)
                         )
-                    )
+                    ), 'utf8'
                 );
             }, $result);
 
             $result = array_values(array_filter($result, function($text){
-                return mb_strlen($text) == 5;
+                return mb_strlen($text, 'utf8') == 5;
             }));
 
             return $result;

@@ -90,7 +90,7 @@ class Parser
 
     public function refreshCaptcha()
     {
-        curl_exec($this->createCurl("https://xn--b1ab2a0a.xn--b1aew.xn--p1ai/captcha/?0." . rand(10**17, 10**18) . rand(10, 99)));
+        curl_exec($this->createCurl("https://xn--b1ab2a0a.xn--b1aew.xn--p1ai/captcha/?0." . rand(pow(10, 17), pow(10, 18)) . rand(10, 99)));
     }
 
     public function registerPerson(
