@@ -177,10 +177,28 @@ class Parser
         return $data;
     }
 
-    public function getAvailableHours($date)
+    public function getAvailableDays()
     {
-        //return ['hours' => ['']];
-        $ch = $this->createCurl("https://xn--b1ab2a0a.xn--b1aew.xn--p1ai/services/appointment/appointment_hours/");
+        $ch = $this->createCurl("https://xn--b1ab2a0a.xn--b1aew.xn--p1ai/services/appointment/appointment_schedule_view/?" . http_build_query([
+            'site_id' => '2',
+            'district_id' => '',
+            'document_id' => '364',
+            'operation_id' => '165',
+            'division_id' => '20',
+            'time' => '',
+            'date' => '',
+            'lastname' => '',
+            'firstname' => '',
+            'patronymic' => '',
+            'pdoctype' => '1',
+            'select' => '',
+            'pdocnumber' => '',
+            'address' => '',
+            'phone' => '',
+            'email' => '',
+            'captcha' => '',
+        ]));
+
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Pragma: no-cache',
             'Origin: https://xn--b1ab2a0a.xn--b1aew.xn--p1ai',
@@ -190,9 +208,50 @@ class Parser
             'Content-Type: application/x-www-form-urlencoded; charset=UTF-8',
             'X-Requested-With: XMLHttpRequest',
         ]);
+
         curl_setopt($ch, CURLOPT_REFERER, 'https://xn--b1ab2a0a.xn--b1aew.xn--p1ai/services/appointment');
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+
+        $t = microtime(true);
+        $response = curl_exec($ch);
+        $time = sprintf("%.3f", microtime(true) - $t);
+
+        message("Time for /services/appointment/appointment_schedule_view/: $time s");
+
+        if (!preg_match('~document.app_emptydays_20 = \{"\d+":\{"data":(\[[\d.,"]+\]),"to":\d+\}\};~', $response, $ans)) {
+            error("Can't fetch open days");
+            return [];
+        }
+
+        $emptyDays = json_decode($ans[1], true);
+
+        if (!preg_match_all('~document.app_(?:busy|play)days_20  = \{"\d+":\{"data":(\[[\d.,"]+\]),"to":\d+\}\};~', $response, $ans)) {
+            error("Can't fetch open days");
+            return [];
+        }
+
+        $days = [];
+        for ($i = 0; $i <= 17; $i++) {
+            $date = date('d.m.Y', strtotime("+$i days"));
+            $day = date("w", strtotime($date));
+            if (in_array($day, $emptyDays)) {
+                continue;
+            }
+
+            $days[] = $date;
+        }
+
+        foreach ($ans[1] as $json){
+            $list = json_decode($json, true);
+            $days = array_diff($days, $list);
+        }
+
+        return $days;
+    }
+
+    public function getAvailableHours($date)
+    {
+        //return ['hours' => ['']];
+        $ch = $this->createCurl("https://xn--b1ab2a0a.xn--b1aew.xn--p1ai/services/appointment/appointment_hours/" . http_build_query([
             'site_id' => '2',
             'district_id' => '',
             'document_id' => '364',
@@ -211,6 +270,16 @@ class Parser
             'email' => '',
             'captcha' => '',
         ]));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Pragma: no-cache',
+            'Origin: https://xn--b1ab2a0a.xn--b1aew.xn--p1ai',
+            'Accept-Encoding: deflate',
+            'Accept-Language: ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
+            'Accept: application/json, text/javascript, */*; q=0.01',
+            'Content-Type: application/x-www-form-urlencoded; charset=UTF-8',
+            'X-Requested-With: XMLHttpRequest',
+        ]);
+        curl_setopt($ch, CURLOPT_REFERER, 'https://xn--b1ab2a0a.xn--b1aew.xn--p1ai/services/appointment');
 
         $t = microtime(true);
         $response = curl_exec($ch);
