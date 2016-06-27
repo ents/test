@@ -33,7 +33,8 @@ for (;;) {
 				if (empty($result['errors'])) {
 					message("Registration success! " . json_encode($result, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 					sendSms("Registration success");
-					return;
+					sleep(300);
+					continue 3;
 				}
 
 				if (!empty($result['errors']) && empty($result['errors']['captcha'])) {
@@ -45,7 +46,9 @@ for (;;) {
 						$mess = "See details at log";
 					}
 					sendSms("Registration failed, captcha no error. $mess");
-					return;
+
+					sleep(300);
+					continue 3;
 				}
 
 			}
