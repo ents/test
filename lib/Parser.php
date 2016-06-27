@@ -102,7 +102,7 @@ class Parser
         $pasport = 'ER310018',
         $address = 'Москва, ул. Милашенкова 3к1, кв 186',
         $phone = '+7 916 054 9864',
-        $email = 'entsupml@gmail.com'
+        $email = 'anaumenko11@mail.ru'
     ) {
         //curl "https://xn--b1ab2a0a.xn--b1aew.xn--p1ai/services/appointment/" \
         // -H "Pragma: no-cache"\

@@ -31,8 +31,8 @@ for (;;) {
 				var_export($result);
 
 				if (empty($result['errors'])) {
-					log("Registration success! " . json_encode($result, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
-					sendSms("Registration success: " . json_encode($result, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+					message("Registration success! " . json_encode($result, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+					sendSms("Registration success");
 					return;
 				}
 
